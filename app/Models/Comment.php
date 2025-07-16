@@ -49,4 +49,24 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class, 'parent_comment_id');
     }
+
+    /**
+     * Get default max depth from constant.
+     *
+     * @return int
+     */
+    public static function getMaxDepth(): int
+    {
+        return config('constants.default_comment_max_depth');
+    }
+
+    /**
+     * Check if a comment can accept replies.
+     *
+     * @return bool
+     */
+    public function canReply(): bool
+    {
+        return $this->depth < self::getMaxDepth();
+    }
 }
