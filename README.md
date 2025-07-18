@@ -12,11 +12,14 @@ A Laravel 11 project demonstrating:
 ## Features
 
 - Posts with comments and nested replies (up to three levels deep as defined)
-- Recursive display of comments using Livewire components
+- **Livewire Components:**
+    - `CommentForm` for submitting new comments and replies
+    - `CommentsTree` for recursively rendering comments and refreshing on new submissions
+- Real-time UI updates without page reloads
 - Prevent replies beyond the third level
 - Delete post with related comments (cascade delete)
 - Scheduled command to remove empty comments
-- Bootstrap 5 for UI
+- Bootstrap 5 used for UI and layout
 
 ---
 
