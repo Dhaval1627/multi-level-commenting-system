@@ -1,61 +1,166 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Multi-Level Commenting System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 11 project demonstrating:
 
-## About Laravel
+- **Nested Comment System** with max depth limit
+- **Livewire components** for dynamic comments/replies
+- **Scheduled command** to delete empty comments
+- **Bootstrap 5 styling**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Posts with comments and nested replies (up to three levels deep as defined)
+- Recursive display of comments using Livewire components
+- Prevent replies beyond the third level
+- Delete post with related comments (cascade delete)
+- Scheduled command to remove empty comments
+- Bootstrap 5 for UI
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation Steps
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Clone the repository
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/Dhaval1627/multi-level-commenting-system.git
+cd multi-level-commenting-system
+```
 
-## Laravel Sponsors
+### 2. Install dependencies
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+```
 
-### Premium Partners
+### 3. Copy `.env` file & setup
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+Set your **database credentials** in `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```ini
+DB_DATABASE=multi_level_commenting_system
+DB_USERNAME=<your_username>
+DB_PASSWORD=<your_password>
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Database Setup
 
-## Security Vulnerabilities
+### 4. Run Migrations
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan migrate
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Seeding Fake Data (Optional)
+
+You can manually create posts and comments using:
+
+```bash
+php artisan tinker
+
+// Create a post
+$post = \App\Models\Post::create([
+    'title' => 'Test Post',
+    'content' => 'This is a sample post.'
+]);
+
+// Create a comment
+\App\Models\Comment::create([
+    'post_id' => $post->id,
+    'content' => 'First comment!',
+    'depth' => 1
+]);
+```
+
+---
+
+## Running the Project
+
+```bash
+php artisan serve
+```
+
+Visit:  
+**http://127.0.0.1:8000**
+
+---
+
+## Commenting System
+
+- Add comments and replies (up to three levels deep)
+- Livewire handles real-time updates
+- Bootstrap 5 UI components for styling
+
+---
+
+## Scheduled Task: Delete Empty Comments
+
+### Command to run manually:
+
+```bash
+php artisan comments:delete-empty
+```
+
+### Scheduler in `app/Console/Kernel.php`:
+
+```php
+$schedule->command('comments:delete-empty')->everyMinute();
+```
+
+---
+
+### Run Scheduler (Manual Execution):
+
+```bash
+php artisan schedule:run
+```
+
+---
+
+## Delete Post
+
+- Deletes related comments automatically via **cascade delete**.
+- Uses foreign key constraint for `ON DELETE CASCADE`.
+
+---
+
+## Tools & Versions
+
+| Package   | Version |
+|-----------|---------|
+| Laravel   | 12.x    |
+| PHP       | 8.2+    |
+| Livewire  | Latest  |
+| Bootstrap | 5.3     |
+| MySQL     | 5.7/8+  |
+
+---
+
+## Project Structure
+
+```
+app/Livewire/          => Livewire Components (CommentForm, CommentsTree)
+resources/views/       => Blade Templates & Components
+app/Models/            => Post & Comment Models
+app/Console/Commands/  => DeleteEmptyComments Artisan Command
+routes/web.php         => Routes
+```
+
+---
+
+### Author
+
+Dhaval Parmar
+
+---
